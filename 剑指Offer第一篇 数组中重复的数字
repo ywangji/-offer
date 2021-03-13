@@ -1,0 +1,62 @@
+在一个长度为 n 的数组 nums 里的所有数字都在 0～n-1 的范围内。数组中某些数字是重复的，但不知道有几个数字重复了，也不知道每个数字重复了几次。请找出数组中任意一个重复的数字。
+
+示例 1：
+
+输入：
+[2, 3, 1, 0, 2, 5, 3]
+输出：2 或 3 
+
+思路一：暴力遍历法，题目的要求是找到重复的数字，那么如果我们用暴力遍历的方法，第一个数字和后面的比较，如果没有重复i++，然后继续，这种方法需要时间复杂度是o(n^2)，空间复杂度是o(n)
+class Solution:
+    def findRepeatNumber(self, nums: List[int]) -> int:
+        n = len(nums)
+        j = 0
+        sum=[0]*n
+        sum1=[]
+        if n ==0:
+            return 0
+        elif n == 1:
+            return 1
+        else:
+            for j in range(0,n):
+                for i in nums:
+                    if j == i:
+                        sum[j] += 1
+        for i in range(len(sum)):
+            if sum[i] > 1:
+                return i
+
+思路二：空间换时间法，思路一不好的地方就在于，时间复杂度太高了，我们一般这种降低时间复杂度的方法就是，通过空间换时间，就是例如哈希表或者集合，把遍历过的值记录下来，这样就可以节约大量的时间，所以方法二就是使用哈希表把遍历过的元素存下来，如果发现一次就记录1，发现两次就记录2，并且每次遍历检查，如果大于等于2了，就返回该重复的数字，这种方法很好理解，也是大多数人会使用的方法，这种方法的好处在于把时间复杂度降低到了o(n)，但同样付出的代价是空间复杂度上升到了o(n)，这是很典型的空间换时间的题目，同样的题目，如两数之和也是类似。
+class Solution:
+    def findRepeatNumber(self, nums: List[int]) -> int:
+        n = len(nums)
+        j = 0
+        sum=[0]*n
+        sum1=[]
+        if n ==0:
+            return 0
+        elif n == 1:
+            return 1
+        else:
+            for i in nums:
+                if i not in sum1:
+                    sum1.append(i)
+                else:
+                    return i
+
+思路三：原地置换法，题目中显示nums里所有的数字都在0-n-1的范围内，如果说没有这个条件，显然方法二在大多数情况下就是最好的方法，但是有了这个条件，就可以一个更神奇的方法，原地置换法，大概的思路就是，因为给定的数组是0-n-1这个范围内，因而比如nums[0]假设是2，那么我们可以放到2这个位置，这样，一旦遇到重复的数字，那么在同一个位置就会发生碰撞，我们就可以检测出重复的数字，利用这巧妙的方法，时间复杂度为o(n)，而空间复杂度为o(1)
+class Solution:
+    def findRepeatNumber(self, nums: List[int]) -> int:
+        for i in range(len(nums)):
+            while nums[i] != i:
+                if nums[nums[i]] == nums[i]:
+                    return nums[i]
+                nums[nums[i]], nums[i] = nums[i], nums[nums[i]]
+
+思路四：利用python的内置函数sort()
+class Solution:
+    def findRepeatNumber(self, nums: List[int]) -> int:
+        nums.sort()
+        for i in range(len(nums)-1):
+            if nums[i] == nums[i+1]:
+                return nums[i]
