@@ -1,0 +1,65 @@
+地上有一个m行n列的方格，从坐标 [0,0] 到坐标 [m-1,n-1] 。一个机器人从坐标 [0, 0] 的格子开始移动，它每次可以向左、右、上、下移动一格（不能移动到方格外），也不能进入行坐标和列坐标的数位之和大于k的格子。例如，当k为18时，机器人能够进入方格 [35, 37] ，因为3+5+3+7=18。但它不能进入方格 [35, 38]，因为3+5+3+8=19。请问该机器人能够到达多少个格子？
+
+示例 1：
+
+输入：m = 2, n = 3, k = 1
+输出：3
+示例 2：
+
+输入：m = 3, n = 1, k = 0
+输出：1
+
+本题与 矩阵中的路径 类似，是典型的搜索 & 回溯问题。在介绍回溯算法算法前，为提升计算效率，首先讲述两项前置工作： 数位之和计算 、 可达解分析 
+
+方法一：广度优先搜索
+这道题还有一个隐藏的优化：我们在搜索的过程中搜索方向可以缩减为向右和向下，而不必再向上和向左进行搜索。
+def digitsum(n):
+    ans = 0
+    while n:
+        ans += n % 10
+        n //= 10
+    return ans
+
+class Solution:
+    def movingCount(self, m: int, n: int, k: int) -> int:
+        from queue import Queue
+        q = Queue()
+        q.put((0, 0))
+        s = set()
+        while not q.empty():
+            x, y = q.get()
+            if (x, y) not in s and 0 <= x < m and 0 <= y < n and digitsum(x) + digitsum(y) <= k:
+                s.add((x, y))
+                for nx, ny in [(x + 1, y), (x, y + 1)]:
+                    q.put((nx, ny))
+        return len(s)
+
+
+方法二：深度优先遍历 DFS
+思路
+考虑到方法一提到搜索的方向只需要朝下或朝右，我们可以得出一种递推的求解方法。
+
+算法：
+定义 vis[i][j] 为 (i, j) 坐标是否可达，如果可达返回 1，否则返回 0。
+首先 (i, j) 本身需要可以进入，因此需要先判断 i 和 j 的数位之和是否大于 k ，如果大于的话直接设置 vis[i][j] 为不可达即可。
+否则，前面提到搜索方向只需朝下或朝右，因此 (i, j) 的格子只会从 (i - 1, j) 或者 (i, j - 1) 两个格子走过来（不考虑边界条件），那么 vis[i][j] 是否可达的状态则可由如下公式计算得到：
+vis[i][j]=vis[i−1][j] or vis[i][j−1]
+即只要有一个格子可达，那么 (i, j) 这个格子就是可达的，因此我们只要遍历所有格子，递推计算出它们是否可达然后用变量 ans 记录可达的格子数量即可。
+初始条件 vis[i][j] = 1 ，递推计算的过程中注意边界的处理。
+
+def digitsum(n):
+    ans = 0
+    while n:
+        ans += n % 10
+        n //= 10
+    return ans
+
+class Solution:
+    def movingCount(self, m: int, n: int, k: int) -> int:
+        vis = set([(0, 0)])
+        for i in range(m):
+            for j in range(n):
+                if ((i - 1, j) in vis or (i, j - 1) in vis) and digitsum(i) + digitsum(j) <= k:
+                    vis.add((i, j))
+        return len(vis)
+
