@@ -29,6 +29,7 @@ class Solution:
                 num += 1
         return num
         
+return bin(n).count('1')
 O（n）
 采用 python 自带了方法 bin 函数，比如 bin(12345) 回返回字符串 '0b11000000111001', 这个时候在把0b去掉即可:
 
@@ -55,3 +56,5 @@ class Solution:
             res += n & 1
             n >>= 1
         return res
+        
+        
