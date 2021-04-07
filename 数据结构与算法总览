@@ -1,0 +1,40 @@
+数据结构：
+
+一维数据结构、二维数据结构和特殊数据结构
+
+一维数据结构： 基础 ：数组array 、 链表linked list
+              高级：栈stack、队列queue、双端队列deque、集合set、映射map(hash or map)、etc
+              
+二维数据结构: 当一个一维的链表他的分叉有俩个的时候就变成了二维数据结构
+             基础：树tree、图graph
+             高级就是树的基础上加了很多的特殊判断和约定条件
+             高级：二叉搜索树binary search tree 就是跟节点大于他的左子树且小于它的右子树的全部节点 （比如有red-black tree,AVL）
+                  堆 heap、并查集disjoint set、字典树Trie、etc
+
+特殊数据结构:
+             位运算Bitwise、布隆过滤器BloomFilter
+             LRU Cache
+             
+算法：
+
+1.跳转语句 if-else、switch
+2.循环语句 for、while loop
+3.递归Recursion ，函数自己调用自己
+这三种最基础的算法会组成所有的算法和数据结构
+
+4.搜索Search : 深度优先搜索Depth first search、广度优先搜索Breadth first search,启发式搜索A* ,etc
+5.动态规划 Dynamic Programming
+6.二分查找Binary Search
+7.贪心算法Greedy
+8.数学math,几何Geometry\
+
+五遍刷题，练习缺陷、弱点地方
+切题：Clarification 理解题目
+      Possible solutions 把所有可能的解法都想一遍
+           comepare time/space
+           optimal
+      Coding
+      Test cases
+      
+五分钟读题+思考，直接看解法（比较解法的优劣）、背诵默写解法、自己写、多种解法比较  过了一天之后再重复做题 ，过了一周反复做题 ，面试前一周刷题
+不能只做一遍
