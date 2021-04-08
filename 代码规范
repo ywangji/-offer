@@ -1,0 +1,32 @@
+用自顶向下的编程方式来写 from clean code
+
+类似于一个报纸的方式，头版头条都在前面，细节都在后面，同理，最关键的代码在最上面，其他的私有函数和一些细节逻辑的函数用一些子函数在类下面放
+
+比如：leetcode 125 验证回文串
+给定一个字符串，验证它是否是回文串，只考虑字母和数字字符，可以忽略字母的大小写，可以将空字符串定义为有效的回文串
+例如：“A man ,a plan,a canal: Panama”
+输出：true
+
+用自顶向下的方式：
+class Solution{
+  public boolean isPalindrome(String s){
+    //高层次（主干）逻辑
+    //1、filter out number & char ;2、reverse and compare  思路就是因为只考虑字母和数字，就把非数字和非字母过滤掉，然后把该字符串前后调转一下比对一个是否相同即可
+    //就是把主干逻辑写出来即可，后面再专注于代码细节本身
+    String filteredS = _filterNonNumberAndChar(s);
+    
+    String reversedS = _reverseString(filteredS);
+    
+    return reversedS.equalsIgnoreCase(filteredS); // JAVA中有不分大小写来比较
+    
+    return true;
+  }
+  
+  private String _reverseString(String filteredS){
+    return new StringBuilder(s).reverse().toString();
+  }
+  
+  private String _filterNonNumberAndChar(String s){
+    return s.replaceAll(regex:"[^A-Za-z0-9]",replacement:""); //把非字母数字都用空字符代替
+  }
+}
