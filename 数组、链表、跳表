@@ -1,0 +1,200 @@
+数组的常见写法：
+C++ ： int a[100];
+python : list = []
+每当你申请数组的话，在内存中给你开辟一段连续的地址，每一个地址可以直接通过内存管理器进行访问
+优点是 可以随机的访问任何一个元素
+缺点是 增加删除一些数组元素的时候会进行一些相应的操作
+
+链表：
+元素定义好之后，有Value和Next,Next指向下一个元素，串在一起就会相当于一个数组，其中每一个元素都会用node来定义，node里面有两个成员变量，一个是value，一个是next，value可以是个类，有很多值都可以。
+单链表是只有一个next指针，双向链表是有next 和 prev，头指针用head，尾指针用tail表示，最后一个next指针指向None
+tail指针的next指向head，叫做循环链表
+
+跳表：
+为了优化或者补足链表的缺陷而设计出来的，因为链表访问的时间复杂度是O(n)的
+优化的思想很重要：就是所谓的升维和叫做空间换时间
+升维就是增加一个所谓的比如中指针，或者增加多个指针
+如何提高链表线性查按照的效率：就是增加了索引，即指向头指针的是第一个，下一个是链表的next+1个，每次都是走向next+1，就是两倍的next,通俗点就是链表的速度是1，一级索引的速度是2，二级索引速度是4
+如果链表元素很多话就增加多级索引，增加log2n个级索引
+在跳表中查询任意数据的时间复杂度就是O(logn),空间复杂度是O(n)
+
+例子：
+1. leetcode 283. 移动零
+给定一个数组 nums，编写一个函数将所有 0 移动到数组的末尾，同时保持非零元素的相对顺序。
+
+示例:
+
+输入: [0,1,0,3,12]
+输出: [1,3,12,0,0]
+说明:必须在原数组上操作，不能拷贝额外的数组。尽量减少操作次数。
+
+思路一： 双指针
+我们创建两个指针i和j，第一次遍历的时候指针j用来记录当前有多少非0元素。即遍历的时候每遇到一个非0元素就将其往数组左边挪，第一次遍历完后，j指针的下标就指向了最后一个非0元素下标。
+第二次遍历的时候，起始位置就从j开始到结束，将剩下的这段区域内的元素全部置为0
+
+class Solution(object):
+	def moveZeroes(self, nums):
+		"""
+		:type nums: List[int]
+		:rtype: None Do not return anything, modify nums in-place instead.
+		"""
+		if not nums:
+			return 0
+		# 第一次遍历的时候，j指针记录非0的个数，只要是非0的统统都赋给nums[j]	
+		j = 0
+		for i in xrange(len(nums)):
+			if nums[i]:
+				nums[j] = nums[i]
+				j += 1
+		# 非0元素统计完了，剩下的都是0了
+		# 所以第二次遍历把末尾的元素都赋为0即可
+		for i in xrange(j,len(nums)):
+			nums[i] = 0
+      
+思路二：一次遍历
+快速排序首先要确定一个待分割的元素做中间点x，然后把所有小于等于x的元素放到x的左边，大于x的元素放到其右边。
+这里我们可以用0当做这个中间点，把不等于0(注意题目没说不能有负数)的放到中间点的左边，等于0的放到其右边。
+这的中间点就是0本身，所以实现起来比快速排序简单很多，我们使用两个指针i和j，只要nums[i]!=0，我们就交换nums[i]和nums[j]
+
+class Solution:
+    def moveZeroes(self, nums: List[int]) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        j = 0
+        for i in range(len(nums)):
+            if nums[i] != 0:
+                nums[j] = nums[i]
+                if i != j:
+                    nums[i] = 0
+                j+=1
+        return nums
+        
+2.leetcode 11 盛最多水的容器
+给你 n 个非负整数 a1，a2，...，an，每个数代表坐标中的一个点 (i, ai) 。在坐标内画 n 条垂直线，垂直线 i 的两个端点分别为 (i, ai) 和 (i, 0) 。找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。
+
+说明：你不能倾斜容器。=
+输入：[1,8,6,2,5,4,8,3,7]
+输出：49 
+解释：图中垂直线代表输入数组 [1,8,6,2,5,4,8,3,7]。在此情况下，容器能够容纳水（表示为蓝色部分）的最大值为 49。
+示例 2：
+
+输入：height = [1,1]
+输出：1
+示例 3：
+
+输入：height = [4,3,2,1,4]
+输出：16
+示例 4：
+
+输入：height = [1,2,1]
+输出：2
+
+//一维数组的坐标变换，不停的变换i,j
+//思路一：枚举：左边界left bar x和右边界 right bar y，枚举这两边的左右柱子，然后用它的长再乘以宽 (x - y)* height_diff  O(n^2)
+class Solution:
+    def maxArea(self, height: List[int]) -> int:
+        max1 = 0
+        for i in range(len(height)):
+            for j in range(i+1,len(height)):
+                area = (j - i) * min(height[i] , height[j])
+                max1 = max(area,max1)
+        return max1  
+Wrong:超出时间限制
+
+思路二：左右边界i,j 同时向中间收敛 O(n)  左右夹逼法则
+如果左右边界选到最两边，宽度是最宽的，高度并不一定是最高的，一开始两个棒子选在最左边和最右边的两个边界，再往里慢慢收敛即可，因为宽度最高，选择其他更高的棒子往里收敛，往里收敛如果棒子的高度不及外面的棒子就不用再看了卡纳
+就是往里收敛关注更高的棒子即可，谁更小谁往里挪
+class Solution:
+    def maxArea(self, height: List[int]) -> int:
+        max1 = 0
+        i = 0
+        j = len(height) -1 
+        while i < j :
+            if height[i] < height[j]:
+                minHeight = height[i]
+                i+=1
+            else:
+                minHeight = height[j]
+                j-=1
+            area = (j - i + 1) * minHeight
+            max1 = max(max1, area)
+        return max1
+        
+3. leetcode 70 爬楼梯
+假设你正在爬楼梯。需要 n 阶你才能到达楼顶。
+每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？
+注意：给定 n 是一个正整数。
+
+示例 1：
+输入： 2
+输出： 2
+解释： 有两种方法可以爬到楼顶。
+1.  1 阶 + 1 阶
+2.  2 阶
+
+示例 2：
+输入： 3
+输出： 3
+解释： 有三种方法可以爬到楼顶。
+1.  1 阶 + 1 阶 + 1 阶
+2.  1 阶 + 2 阶
+3.  2 阶 + 1 阶
+
+解题的时候懵逼了怎么办？  能不能暴力？最基本的情况怎么解决？能不能化繁为简？
+就是找最近重复子问题
+当台阶为1的时候 为1 ， 当台阶为2的时候，为2 ，当台阶为3的时候 为3 ， 4：f(2) + f(3)  f(n) = f(n-1) + f(n-2)
+思路一：
+class Solution:
+    def climbStairs(self, n: int) -> int:
+        if n <= 3 : return n
+        f1 , f2 , f3 = 1 , 2 ,3
+        for i in range(3 , n+1):
+            f3 = f1 + f2
+            f1 = f2 
+            f2 = f3
+        return f3
+
+4. leetcode 15. 三数之和
+给你一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？请你找出所有和为 0 且不重复的三元组。
+注意：答案中不可以包含重复的三元组。
+示例 1：
+
+输入：nums = [-1,0,1,2,-1,-4]
+输出：[[-1,-1,2],[-1,0,1]]
+示例 2：
+
+输入：nums = []
+输出：[]
+示例 3：
+
+输入：nums = [0]
+输出：[]
+
+思路一：暴力求解：三重循环 O(n^3)
+思路二：哈希表来记录a,b，之后来查询-c
+思路三：双指针：左右下标往中间推进
+
+class Solution:
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        nums.sort()
+        if len(nums) < 3:
+            return []
+        res = []
+        for k in range(len(nums)-2):
+            if nums[k] > 0:
+                return []
+            i , j = k+1 , len(nums) -1
+            while i < j:
+                s = nums[k] + nums[i] + nums[j]
+                if s < 0:
+                    i+=1
+                elif s > 0:
+                    j -= 1
+                else:
+                    if ([nums[k] , nums[i] , nums[j]]) not in res:
+                        res.append([nums[k] , nums[i] , nums[j]])
+                    i += 1
+                    j -= 1
+        return res
+
